@@ -11,4 +11,6 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<ParkingSlot> ParkingSlots { get; set; }
+    public DbSet<ParkingTicket> ParkingTickets { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 }
