@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VehicleParkingApi.Data;
 using VehicleParkingApi.Services;
+using VehicleParkingApi.Models;
 
 namespace VehicleParkingApi.Controllers;
 
@@ -12,23 +13,27 @@ public class ParkingController : ControllerBase
 {
     private readonly AppDbContext _db;
 
-    public ParkingController(AppDbContext db)
+    public ParkingController(AppDbContext db) 
     {
         _db = db;
     }
 
     [HttpGet("availability")]
-    public IActionResult GetAvailability(string? vehicleType)
+    public IActionResult GetAvailability(VehicleType? vehicleType, bool onlyFree = true)
     {
         var slotsQuery = _db.ParkingSlots.AsQueryable();
 
-        if (!string.IsNullOrEmpty(vehicleType))
+        if (vehicleType != null)
         {
             slotsQuery = slotsQuery.Where(s => s.VehicleType == vehicleType);
         }
 
-        var slotsList = slotsQuery.ToList();
-        return Ok(slotsList);
+        if (onlyFree)
+        {
+            slotsQuery = slotsQuery.Where(s => !s.IsOccupied);
+        }
+
+        return Ok(slotsQuery.ToList());
     }
 
     // Comes from the Singleton instead of hitting the database again -
@@ -36,8 +41,8 @@ public class ParkingController : ControllerBase
     [HttpGet("summary")]
     public IActionResult GetSummary()
     {
-        var tracker = ParkingSlotTracker.GetInstance();
-        return Ok(new
+        var tracker = ParkingSlotTracker.GetInstance(); // am getting singleton
+        return Ok(new //return summary -  anonymous object 
         {
             totalSlots = tracker.TotalSlots,
             availableSlots = tracker.GetAvailableCount()
@@ -50,11 +55,11 @@ public class ParkingController : ControllerBase
     public IActionResult OccupySlot(int id)
     {
         var slot = _db.ParkingSlots.FirstOrDefault(s => s.Id == id);
-        if (slot == null)
+        if (slot == null) // 404 if not exist
         {
             return NotFound("Slot not found");
         }
-        if (slot.IsOccupied)
+        if (slot.IsOccupied) // if already occupied 400
         {
             return BadRequest("Slot is already occupied");
         }
@@ -64,7 +69,7 @@ public class ParkingController : ControllerBase
 
         ParkingSlotTracker.GetInstance().MarkOccupied();
 
-        return Ok("Slot " + slot.SlotNumber + " is now occupied");
+        return Ok("Slot " + slot.SlotNumber + " is now occupied"); //  suucces 200 ok
     }
 
     [HttpPut("{id}/release")]
@@ -74,14 +79,14 @@ public class ParkingController : ControllerBase
         var slot = _db.ParkingSlots.FirstOrDefault(s => s.Id == id);
         if (slot == null)
         {
-            return NotFound("Slot not found");
+            return NotFound("Slot not found");  // 404 not found 
         }
         if (!slot.IsOccupied)
         {
-            return BadRequest("Slot is already free");
+            return BadRequest("Slot is already free"); //400
         }
 
-        slot.IsOccupied = false;
+        slot.IsOccupied = false; // occoupied to available
         _db.SaveChanges();
 
         ParkingSlotTracker.GetInstance().MarkFreed();
