@@ -1,0 +1,106 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using VehicleParkingApi.Data;
+using VehicleParkingApi.Models;
+using VehicleParkingApi.Services;
+using Microsoft.OpenApi;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Paste only your token here"
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+    });
+});
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Singleton lifetime = ASP.NET Core's built-in way of giving you
+// exactly one shared instance for the app's lifetime
+builder.Services.AddSingleton<TokenService>();
+
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
+builder.Services.AddAuthorization();
+//
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+
+    if (!db.ParkingSlots.Any())
+    {
+        db.ParkingSlots.AddRange(
+            new ParkingSlot { SlotNumber = "A1", VehicleType = "Car", IsOccupied = false },
+            new ParkingSlot { SlotNumber = "A2", VehicleType = "Car", IsOccupied = true },
+            new ParkingSlot { SlotNumber = "A3", VehicleType = "Car", IsOccupied = false },
+            new ParkingSlot { SlotNumber = "B1", VehicleType = "Bike", IsOccupied = false },
+            new ParkingSlot { SlotNumber = "B2", VehicleType = "Bike", IsOccupied = true }
+        );
+        db.SaveChanges();
+    }
+
+    if (!db.Users.Any(u => u.Role == "Admin"))
+    {
+        db.Users.Add(new User
+        {
+            Username = "admin",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            Role = "Admin"
+        });
+        db.SaveChanges();
+    }
+
+    ParkingSlotTracker.GetInstance().LoadFromDb(db);
+}
+
+app.Run();
