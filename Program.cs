@@ -35,6 +35,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Singleton lifetime = ASP.NET Core's built-in way of giving you
 // exactly one shared instance for the app's lifetime
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddScoped<IFeeCalculator, CarFeeCalculator>();
+builder.Services.AddScoped<IFeeCalculator, BikeFeeCalculator>();
+builder.Services.AddScoped<IFeeCalculator, TruckFeeCalculator>();
+builder.Services.AddScoped<FeeCalculatorResolver>();
+builder.Services.AddScoped<TicketService>();
+builder.Services.AddScoped<PaymentService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 
@@ -80,11 +86,12 @@ using (var scope = app.Services.CreateScope())
     if (!db.ParkingSlots.Any())
     {
         db.ParkingSlots.AddRange(
-            new ParkingSlot { SlotNumber = "A1", VehicleType = "Car", IsOccupied = false },
-            new ParkingSlot { SlotNumber = "A2", VehicleType = "Car", IsOccupied = true },
-            new ParkingSlot { SlotNumber = "A3", VehicleType = "Car", IsOccupied = false },
-            new ParkingSlot { SlotNumber = "B1", VehicleType = "Bike", IsOccupied = false },
-            new ParkingSlot { SlotNumber = "B2", VehicleType = "Bike", IsOccupied = true }
+            new ParkingSlot { SlotNumber = "A1", VehicleType = VehicleType.Car, IsOccupied = false },
+            new ParkingSlot { SlotNumber = "A2", VehicleType = VehicleType.Car, IsOccupied = true },
+            new ParkingSlot { SlotNumber = "A3", VehicleType = VehicleType.Car, IsOccupied = false },
+            new ParkingSlot { SlotNumber = "B1", VehicleType = VehicleType.Bike, IsOccupied = false },
+            new ParkingSlot { SlotNumber = "B2", VehicleType = VehicleType.Bike, IsOccupied = true },
+            new ParkingSlot { SlotNumber = "T1", VehicleType = VehicleType.Truck, IsOccupied = false }
         );
         db.SaveChanges();
     }
