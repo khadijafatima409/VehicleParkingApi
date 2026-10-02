@@ -58,7 +58,15 @@ public class TicketController : ControllerBase
         try
         {
             var payment = _paymentService.RecordPayment(id, request.Method);
-            return Ok(payment);
+            var response = new PaymentResponse
+            {
+                Id = payment.Id,
+                ParkingTicketId = payment.ParkingTicketId,
+                Amount = payment.Amount,
+                Method = payment.Method.ToString(),
+                PaidAt = payment.PaidAt
+            };
+            return Ok(response);
         }
         catch (TicketNotFoundException ex)
         {
