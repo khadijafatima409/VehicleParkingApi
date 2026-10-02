@@ -18,6 +18,11 @@ public class ParkingSlotTracker
 
     private ParkingSlotTracker()
     {
+        if (_instance != null)
+        {
+            throw new InvalidOperationException(
+            "An instance of ParkingSlotTracker already exists. Use GetInstance() instead.");
+        }
     }
 
     public static ParkingSlotTracker GetInstance()
