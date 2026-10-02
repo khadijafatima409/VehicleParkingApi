@@ -13,6 +13,6 @@ public class CarFeeCalculator : IFeeCalculator
         {
             hours = 1;
         }
-        return (decimal)hours * 2.0m;
+        return (decimal)hours * 50.0m;
     }
 }

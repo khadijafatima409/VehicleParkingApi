@@ -13,6 +13,6 @@ public class TruckFeeCalculator : IFeeCalculator
         {
             hours = 1;
         }
-        return (decimal)hours * 4.0m;
+        return (decimal)hours * 100.0m;
     }
 }

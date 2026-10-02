@@ -13,6 +13,6 @@ public class BikeFeeCalculator : IFeeCalculator
         {
             hours = 1;
         }
-        return (decimal)hours * 1.0m;
+        return (decimal)hours * 20.0m;
     }
 }
