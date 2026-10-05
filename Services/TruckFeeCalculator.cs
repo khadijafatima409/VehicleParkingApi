@@ -2,17 +2,8 @@ using VehicleParkingApi.Models;
 
 namespace VehicleParkingApi.Services;
 
-public class TruckFeeCalculator : IFeeCalculator
+public class TruckFeeCalculator : HourlyFeeCalculator
 {
-    public VehicleType SupportedType => VehicleType.Truck;
-
-    public decimal CalculateFee(DateTime entryTime, DateTime exitTime)
-    {
-        var hours = Math.Ceiling((exitTime - entryTime).TotalHours);
-        if (hours < 1)
-        {
-            hours = 1;
-        }
-        return (decimal)hours * 100.0m;
-    }
+    public override VehicleType SupportedType => VehicleType.Truck;
+    protected override decimal RatePerHour => 100m;
 }
