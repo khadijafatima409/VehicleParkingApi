@@ -18,6 +18,17 @@ public class TicketService
 
     public ParkingTicket CreateTicket(string vehicleNumber, VehicleType vehicleType)
     {
+
+        // NEW: clean the number so "lea-123 " and "LEA-123" count as the same vehicle
+        vehicleNumber = vehicleNumber.Trim().ToUpper();
+
+        // NEW: block a vehicle that already has an open ticket
+        var alreadyInside = _db.ParkingTickets.Any(t => t.VehicleNumber == vehicleNumber && !t.IsClosed);
+        if (alreadyInside)
+        {
+            throw new VehicleAlreadyParkedException("This vehicle is already parked");
+        }
+        
         var freeSlot = _db.ParkingSlots.FirstOrDefault(s => s.VehicleType == vehicleType && !s.IsOccupied);
         if (freeSlot == null)
         {

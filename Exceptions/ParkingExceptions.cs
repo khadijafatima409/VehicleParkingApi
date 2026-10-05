@@ -29,3 +29,8 @@ public class PaymentAlreadyMadeException : ParkingException
 {
     public PaymentAlreadyMadeException(string message) : base(message) { }
 }
+
+public class VehicleAlreadyParkedException : ParkingException
+{
+    public VehicleAlreadyParkedException(string message) : base(message) { }
+}
