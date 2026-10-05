@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Parking System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="topbar">
+        <h1>Vehicle Parking System</h1>
+        <div id="user-bar" class="hidden">
+            <span id="user-info"></span>
+            <button class="logout-button" onclick="logout()">Log out</button>
+        </div>
+    </header>
+
+    <!-- Login page: the only thing visible before login -->
+    <main id="login-page" class="page">
+        <div class="auth-box">
+            <h2>Log in</h2>
+            <label for="login-username">Username</label>
+            <input id="login-username" type="text">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password">
+            <button onclick="login()">Log in</button>
+            <p id="login-message" class="message"></p>
+        </div>
+
+        <div class="auth-box">
+            <h2>Create account</h2>
+            <label for="register-username">Username</label>
+            <input id="register-username" type="text">
+            <label for="register-password">Password (min 6 characters)</label>
+            <input id="register-password" type="password">
+            <button onclick="register()">Create account</button>
+            <p id="register-message" class="message"></p>
+        </div>
+    </main>
+
+    <!-- Dashboard: hidden until login succeeds -->
+    <main id="dashboard" class="page hidden">
+
+        <section class="summary">
+            <div><span id="total-slots">-</span> total slots</div>
+            <div><span id="free-slots">-</span> free now</div>
+        </section>
+
+        <section class="panel">
+            <h2>Parking slots</h2>
+            <div id="slot-list" class="slot-list"></div>
+        </section>
+
+        <section class="panel">
+            <h2>Park a vehicle</h2>
+
+            <div id="park-form">
+                <label for="vehicle-number">Vehicle number</label>
+                <input id="vehicle-number" type="text" placeholder="LEA-4521">
+                <label for="vehicle-type">Vehicle type</label>
+                <select id="vehicle-type">
+                    <option value="Car">Car</option>
+                    <option value="Bike">Bike</option>
+                    <option value="Truck">Truck</option>
+                </select>
+                <button onclick="parkVehicle()">Park vehicle</button>
+                <p id="park-message" class="message"></p>
+            </div>
+
+            <!-- The ticket. Only this part is printed. -->
+            <div id="ticket" class="ticket hidden">
+                <h3>Parking Ticket</h3>
+                <p id="t-number" class="ticket-no"></p>
+                <div class="row"><span>Vehicle</span><span id="t-vehicle"></span></div>
+                <div class="row"><span>Type</span><span id="t-type"></span></div>
+                <div class="row"><span>Slot</span><span id="t-slot"></span></div>
+                <div class="row"><span>Entry</span><span id="t-entry"></span></div>
+                <div id="exit-rows" class="hidden">
+                    <div class="row"><span>Exit</span><span id="t-exit"></span></div>
+                    <div class="row"><span>Fee</span><span id="t-fee"></span></div>
+                </div>
+                <div id="paid-row" class="row hidden"><span>Paid by</span><span id="t-paid"></span></div>
+            </div>
+
+            <div id="ticket-actions" class="hidden">
+                <button class="secondary" onclick="window.print()">Print ticket</button>
+                <button id="exit-button" onclick="exitVehicle()">Exit vehicle</button>
+
+                <div id="payment-box" class="hidden">
+                    <select id="payment-method">
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="JazCash">JazCash</option>
+                    </select>
+                    <button onclick="payTicket()">Confirm payment</button>
+                </div>
+
+                <button id="new-ticket-button" class="secondary hidden" onclick="resetTicket()">Park another vehicle</button>
+                <p id="ticket-message" class="message"></p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Order matters: api.js first, because the other files use its functions -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/slots.js"></script>
+    <script src="js/tickets.js"></script>
+</body>
+</html>
