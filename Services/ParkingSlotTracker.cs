@@ -2,13 +2,10 @@ using VehicleParkingApi.Data;
 
 namespace VehicleParkingApi.Services;
 
-// Classic Singleton pattern, written by hand so you can see the
-// mechanics: a private constructor stops anyone else from doing
-// "new ParkingSlotTracker()", and one static field holds the only
-// copy that will ever exist. Every controller that asks for it
-// gets the SAME object back, so the slot counts stay consistent
-// instead of every request having its own separate copy.
-public class ParkingSlotTracker
+// Classic Singleton: only one object of this class can exist in the whole app.
+// sealed  = nobody can inherit from it
+// private constructor = nobody outside can write "new ParkingSlotTracker()"
+public sealed class ParkingSlotTracker
 {
     private static ParkingSlotTracker? _instance;
     private static readonly object _lockObj = new object();
@@ -18,10 +15,11 @@ public class ParkingSlotTracker
 
     private ParkingSlotTracker()
     {
+        // Reflection can call a private constructor, so this stops a second object
         if (_instance != null)
         {
             throw new InvalidOperationException(
-            "An instance of ParkingSlotTracker already exists. Use GetInstance() instead.");
+                "An instance of ParkingSlotTracker already exists. Use GetInstance() instead.");
         }
     }
 
@@ -49,11 +47,6 @@ public class ParkingSlotTracker
         }
     }
 
-    public int GetAvailableCount()
-    {
-        return TotalSlots - OccupiedSlots;
-    }
-
     public void MarkOccupied()
     {
         lock (_lockObj)
@@ -73,6 +66,14 @@ public class ParkingSlotTracker
             {
                 OccupiedSlots--;
             }
+        }
+    }
+
+    public int GetAvailableCount()
+    {
+        lock (_lockObj)
+        {
+            return TotalSlots - OccupiedSlots;
         }
     }
 }
