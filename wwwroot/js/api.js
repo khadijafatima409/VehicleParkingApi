@@ -62,7 +62,7 @@ async function readError(response) {
         if (data.errors) {
             return Object.values(data.errors).flat().join(" ");
         }
-        return data.title || text;
+        return data.message || data.title || text;
     } catch {
         return text;
     }

@@ -6,6 +6,7 @@ using VehicleParkingApi.Data;
 using VehicleParkingApi.Models;
 using VehicleParkingApi.Services;
 using Microsoft.OpenApi;
+using VehicleParkingApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,8 +71,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 //
 var app = builder.Build();
-   app.UseDefaultFiles();
-   app.UseStaticFiles();
+    app.UseMiddleware<GlobalExceptionMiddleware>();
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {
