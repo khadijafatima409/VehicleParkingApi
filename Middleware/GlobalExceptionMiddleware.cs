@@ -5,7 +5,7 @@ namespace VehicleParkingApi.Middleware;
 
 public class GlobalExceptionMiddleware
 {
-    private readonly RequestDelegate _next; // the next step in the pipeline; calling it lets the request continue
+    private readonly RequestDelegate _next; 
     private readonly ILogger<GlobalExceptionMiddleware> _logger; // _logger record errors 
 
     public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
