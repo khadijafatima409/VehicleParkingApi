@@ -1,0 +1,14 @@
+name: Local
+values:
+  - key: baseUrl
+    value: ''
+  - key: adminToken
+    value: ''
+  - key: userToken
+    value: ''
+  - key: ticketId
+    value: ''
+  - key: vehicleNumber
+    value: ''
+  - key: checkoutTicketId
+    value: ''
