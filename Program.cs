@@ -46,6 +46,7 @@ builder.Services.AddScoped<IFeeCalculator, TruckFeeCalculator>();
 builder.Services.AddScoped<FeeCalculatorResolver>();
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<CheckoutService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 

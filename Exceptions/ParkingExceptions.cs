@@ -34,3 +34,7 @@ public class VehicleAlreadyParkedException : ParkingException
 {
     public VehicleAlreadyParkedException(string message) : base(message) { }
 }
+public class InsufficientPaymentException : ParkingException
+{
+    public InsufficientPaymentException(string message) : base(message) { }
+}
