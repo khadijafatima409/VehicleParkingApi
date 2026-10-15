@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/{{checkoutTicketId}}/checkout"
+method: POST
+body:
+  type: json
+  content: '{ "method": "Cash", "amountGiven": 100 }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Checkout returns 200\", () => pm.response.to.have.status(200));\r
+
+      const payment = pm.response.json();\r
+
+      pm.test(\"Amount is 50\", () => pm.expect(payment.amount).to.eql(50));\r
+
+      pm.test(\"Method is Cash\", () => pm.expect(payment.method).to.eql(\"Cash\"));"
+    language: text/javascript
+order: 4000

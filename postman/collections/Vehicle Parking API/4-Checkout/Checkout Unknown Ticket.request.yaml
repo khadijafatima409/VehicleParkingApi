@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/999999/checkout"
+method: POST
+body:
+  type: json
+  content: '{ "method": "Cash", "amountGiven": 100 }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Returns 404\", () => pm.response.to.have.status(404));\r
+
+      pm.test(\"Ticket not found\", () => {\r
+
+      \    pm.expect(pm.response.json().message).to.eql(\"Ticket not found\");\r
+
+      });"
+    language: text/javascript
+order: 6000

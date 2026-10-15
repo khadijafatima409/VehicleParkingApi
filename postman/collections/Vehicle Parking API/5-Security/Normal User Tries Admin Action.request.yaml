@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/parkingslots/1/occupy"
+method: PUT
+scripts:
+  - type: beforeRequest
+    code: pm.variables.set("adminToken", pm.environment.get("userToken"));
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.variables.set(\"adminToken\", pm.environment.get(\"adminToken\"));\r
+
+      pm.test(\"Normal user gets 403\", () => pm.response.to.have.status(403));"
+    language: text/javascript
+order: 2000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: "\t{{baseUrl}}/api/tickets/{{ticketId}}/payment"
+method: POST
+body:
+  type: json
+  content: '{ "method": "JazCash" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Returns 400\", () => pm.response.to.have.status(400));\r
+
+      pm.test(\"Already paid\", () => {\r
+
+      \    pm.expect(pm.response.json().message).to.eql(\"This ticket has already been paid\");\r
+
+      });"
+    language: text/javascript
+order: 7000

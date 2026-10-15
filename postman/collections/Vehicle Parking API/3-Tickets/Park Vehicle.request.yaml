@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/entry"
+method: POST
+body:
+  type: json
+  content: '{ "vehicleNumber": "PM-{{$randomInt}}", "vehicleType": "Car" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Ticket created\", () => pm.response.to.have.status(200));\r
+
+      const ticket = pm.response.json();\r
+
+      pm.environment.set(\"ticketId\", ticket.id);\r
+
+      pm.environment.set(\"vehicleNumber\", ticket.vehicleNumber);"
+    language: text/javascript
+order: 1000

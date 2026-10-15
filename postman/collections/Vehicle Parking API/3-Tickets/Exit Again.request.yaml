@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/{{ticketId}}/exit"
+method: PUT
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Returns 400\", () => pm.response.to.have.status(400));\r
+
+      pm.test(\"Already closed\", () => {\r
+
+      \    pm.expect(pm.response.json().message).to.eql(\"Ticket is already closed\");\r
+
+      });"
+    language: text/javascript
+order: 5000

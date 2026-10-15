@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/{{ticketId}}/payment"
+method: POST
+body:
+  type: json
+  content: '{ "method": "JazCash" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Payment returns 200\", () => pm.response.to.have.status(200));\r
+
+      const payment = pm.response.json();\r
+
+      pm.test(\"Amount is 50\", () => pm.expect(payment.amount).to.eql(50));\r
+
+      pm.test(\"Method is JazCash\", () => pm.expect(payment.method).to.eql(\"JazCash\"));"
+    language: text/javascript
+order: 6000
