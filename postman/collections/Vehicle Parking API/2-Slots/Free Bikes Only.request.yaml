@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/parkingslots/availability?vehicleType=Bike"
+method: GET
+queryParams:
+  vehicleType: Bike
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Only free bikes\", () => {\r
+
+      \    pm.response.json().forEach(slot => {\r
+
+      \        pm.expect(slot.vehicleType).to.eql(\"Bike\");\r
+
+      \        pm.expect(slot.isOccupied).to.eql(false);\r
+
+      \    });\r
+
+      });"
+    language: text/javascript
+order: 2000

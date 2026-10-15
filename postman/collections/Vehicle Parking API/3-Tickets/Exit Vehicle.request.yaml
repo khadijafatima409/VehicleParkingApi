@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/{{ticketId}}/exit"
+method: PUT
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Exit returns 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Car fee is 50 for under one hour\", () => pm.expect(pm.response.json().fee).to.eql(50));"
+    language: text/javascript
+order: 4000

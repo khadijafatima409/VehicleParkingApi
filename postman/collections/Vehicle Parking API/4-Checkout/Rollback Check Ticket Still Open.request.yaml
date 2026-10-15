@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/{{checkoutTicketId}}/payment"
+method: POST
+body:
+  type: json
+  content: '{ "method": "Cash" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Ticket was rolled back, still open\", () => {\r
+
+      \    pm.response.to.have.status(400);\r
+
+      \    pm.expect(pm.response.json().message).to.eql(\"Ticket must be closed with a fee before payment\");\r
+
+      });"
+    language: text/javascript
+order: 3000

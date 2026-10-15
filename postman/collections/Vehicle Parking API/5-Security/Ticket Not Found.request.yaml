@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/999999/exit"
+method: PUT
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Returns 404\", () => pm.response.to.have.status(404));\r
+
+      pm.test(\"JSON error from global handler\", () => {\r
+
+      \    const body = pm.response.json();\r
+
+      \    pm.expect(body.statusCode).to.eql(404);\r
+
+      \    pm.expect(body.message).to.eql(\"Ticket not found\");\r
+
+      });"
+    language: text/javascript
+order: 3000

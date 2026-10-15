@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/auth/login"
+method: POST
+body:
+  type: json
+  content: '{ "username": "postmanuser", "password": "test123" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"User login returns 200\", () => pm.response.to.have.status(200));\r
+
+      pm.environment.set(\"userToken\", pm.response.json().token);  "
+    language: text/javascript
+order: 3000

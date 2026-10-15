@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/{{checkoutTicketId}}/checkout"
+method: POST
+body:
+  type: json
+  content: '{ "method": "Cash", "amountGiven": 20 }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Returns 400\", () => pm.response.to.have.status(400));\r
+
+      pm.test(\"Not enough money message\", () => {\r
+
+      \    pm.expect(pm.response.json().message).to.include(\"less than the fee\");\r
+
+      });"
+    language: text/javascript
+order: 2000

@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/api/auth/register"
+method: POST
+body:
+  type: json
+  content: '{ "username": "postmanuser", "password": "test123" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Register returns 200 (new) or 400 (already exists)\", () => {\r
+
+      \    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r
+
+      });"
+    language: text/javascript
+order: 1000

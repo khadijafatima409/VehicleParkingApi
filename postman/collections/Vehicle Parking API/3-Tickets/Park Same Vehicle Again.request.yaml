@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/entry"
+method: POST
+body:
+  type: json
+  content: '{ "vehicleNumber": "{{vehicleNumber}}", "vehicleType": "Car" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Returns 400\", () => pm.response.to.have.status(400));\r
+
+      pm.test(\"Message comes from the global handler\", () => {\r
+
+      \    pm.expect(pm.response.json().message).to.eql(\"This vehicle is already parked\");\r
+
+      });"
+    language: text/javascript
+order: 2000

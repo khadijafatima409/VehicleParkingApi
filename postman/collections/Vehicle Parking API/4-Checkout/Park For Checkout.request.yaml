@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/entry"
+method: POST
+body:
+  type: json
+  content: '{ "vehicleNumber": "CO-{{$randomInt}}", "vehicleType": "Car" }'
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Ticket created\", () => pm.response.to.have.status(200));\r
+
+      pm.environment.set(\"checkoutTicketId\", pm.response.json().id);"
+    language: text/javascript
+order: 1000

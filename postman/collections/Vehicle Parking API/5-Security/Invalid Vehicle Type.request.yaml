@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/tickets/entry"
+method: POST
+body:
+  type: json
+  content: '{ "vehicleNumber": "XX-1", "vehicleType": "Plane" }'
+scripts:
+  - type: afterResponse
+    code: pm.test("Unknown vehicle type returns 400", () => pm.response.to.have.status(400));
+    language: text/javascript
+order: 5000
