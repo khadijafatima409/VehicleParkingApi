@@ -15,7 +15,7 @@ public class TicketController : ControllerBase
     private readonly PaymentService _paymentService;
     private readonly CheckoutService _checkoutService;
 
-        public TicketController(TicketService ticketService, PaymentService paymentService, CheckoutService checkoutService)
+    public TicketController(TicketService ticketService, PaymentService paymentService, CheckoutService checkoutService)
     {
         _ticketService = ticketService;
         _paymentService = paymentService;
